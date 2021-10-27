@@ -1,21 +1,46 @@
+import { useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchEditors } from "../redux/ActionCreators";
 import Home from "./HomeComponent";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import Editor from "./EditorComponent";
-import React from "react";
 
 function Main() {
+  const editors = useSelector((state) => state.editors);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchEditors());
+  }, [dispatch]);
+
   return (
-    <React.Fragment>
+    <div className="main">
       <Header />
       <Switch>
-        <Route path="/home" component={Home} />
-        <Route path="/editor" component={Editor} />
+        <Route exact path="/home" component={Home} />
+        <Route
+          exact
+          path="/editor/untitled"
+          component={() => <Editor untitled={true} />}
+        />
+        <Route
+          exact
+          path="/editor/:editorId"
+          component={({ match }) => (
+            <Editor
+              untitled={false}
+              editor={editors.editors[match.params.editorId]}
+              isLoading={editors.isLoading}
+              errMess={editors.errMess}
+            />
+          )}
+        />
         <Redirect to="/home" />
       </Switch>
       <Footer />
-    </React.Fragment>
+    </div>
   );
 }
 
