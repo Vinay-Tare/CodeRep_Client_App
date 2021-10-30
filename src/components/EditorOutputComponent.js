@@ -1,12 +1,12 @@
 import { Card, CardHeader, CardBody } from "reactstrap";
-import Loading from './LoadingComponent';
+import Loading from "./LoadingComponent";
 
-function EditorOuput({ srcDoc, preparingSrcDoc}) {
+function EditorOuput({ srcDoc, preparingSrcDoc, displayName }) {
   return (
     <div className="editor_output">
       <Card>
-        <CardHeader className="bg-dark text-white">Result</CardHeader>
-        <CardBody className="p-0">
+        <CardHeader className="bg-dark text-white">{displayName}</CardHeader>
+        <CardBody className="p-0 d-flex justify-content-center w-100">
           {preparingSrcDoc ? (
             <Loading />
           ) : (

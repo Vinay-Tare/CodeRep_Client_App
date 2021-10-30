@@ -6,6 +6,7 @@ import Home from "./HomeComponent";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import Editor from "./EditorComponent";
+import Explore from "./ExploreComponent";
 
 function Main() {
   const editors = useSelector((state) => state.editors);
@@ -31,7 +32,22 @@ function Main() {
           component={({ match }) => (
             <Editor
               untitled={false}
-              editor={editors.editors[match.params.editorId]}
+              editor={
+                editors.editors.filter(
+                  (editor) => editor.id === match.params.editorId
+                )[0]
+              }
+              isLoading={editors.isLoading}
+              errMess={editors.errMess}
+            />
+          )}
+        />
+        <Route
+          exact
+          path="/explore"
+          component={() => (
+            <Explore
+              editors={editors.editors}
               isLoading={editors.isLoading}
               errMess={editors.errMess}
             />
