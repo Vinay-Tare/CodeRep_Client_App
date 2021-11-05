@@ -13,18 +13,36 @@ import {
   Button,
 } from "reactstrap";
 import { NavLink } from "react-router-dom";
-import LoginModal from "./LoginModalComponent";
+import { useSelector } from "react-redux";
+import LoginRegisterModal from "./LoginRegisterModalComponent";
+import LogoutModal from "./LogoutModalComponent";
 
 function Header() {
+  const authentication = useSelector((state) => state.authentication);
+
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoginRegisterModalOpen, setIsLoginRegisterModalOpen] =
+    useState(false);
+
+  const toggleLoginRegisterModal = () =>
+    setIsLoginRegisterModalOpen(!isLoginRegisterModalOpen);
+
+  const toggleLogoutModal = () => setIsLogoutModalOpen(!isLogoutModalOpen);
 
   const toggleNav = () => setIsNavOpen(!isNavOpen);
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   return (
     <header className="header">
-      <LoginModal isModalOpen={isModalOpen} toggleModal={toggleModal} />
+      <LoginRegisterModal
+        isModalOpen={isLoginRegisterModalOpen}
+        toggleModal={toggleLoginRegisterModal}
+      />
+      <LogoutModal
+        isModalOpen={isLogoutModalOpen}
+        toggleModal={toggleLogoutModal}
+      />
       <Navbar color="dark" dark expand="md">
         <NavbarBrand href="/">CodeRep</NavbarBrand>
         <NavbarToggler onClick={toggleNav} />
@@ -62,21 +80,21 @@ function Header() {
           </Nav>
           <Nav className="ml-auto" navbar>
             <NavItem>
-              {false ? ( // Here We Will Add Logged In Status As Condition When We Setup Login
+              {authentication.isAuthenticated ? (
                 <Button
                   outline
                   size="sm"
                   className="text-light"
-                  onClick={() => toggleModal()}
+                  onClick={toggleLogoutModal}
                 >
-                  <span className="fa fa-sign-out"> Logout</span>
+                  <span className="fa fa-sign-out">Logout</span>
                 </Button>
               ) : (
                 <Button
                   outline
                   size="sm"
                   className="text-light"
-                  onClick={() => toggleModal()}
+                  onClick={toggleLoginRegisterModal}
                 >
                   <span className="fa fa-sign-in"> Login/Register</span>
                 </Button>
