@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Alert, Input } from "reactstrap";
+import { Prompt } from "react-router";
+import { Container, Row, Col, Alert, Input, Button } from "reactstrap";
 import EditorInput from "./EditorInputComponent";
 import EditorOuput from "./EditorOutputComponent";
 import Loading from "./LoadingComponent";
+import SaveEditorModal from "./SaveEditorModalComponent";
 
 function Editor({
   editor = null,
@@ -15,11 +17,21 @@ function Editor({
   const [javascript, setJavascript] = useState("");
   const [srcDoc, setSrcDoc] = useState("");
   const [preparingSrcDoc, setPreparingSrcDoc] = useState(false);
+  const [isSaveEditorModalOpen, setIsSaveEditorModalOpen] = useState(false);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
+  const toggleSaveEditorModal = () =>
+    setIsSaveEditorModalOpen(!isSaveEditorModalOpen);
 
   const editorName = editor ? editor.name : "";
   const editorDescription = editor ? editor.description : "";
-  const editorOwner = editor ? editor.owner : "";
-  const editorRating = editor ? editor.rating : "";
+  const editorOwner = editor ? editor.owner.username : "";
+  const editorRatingValue = editor ? editor.ratingValue : "";
+  const editorRatingCount = editor ? editor.ratingCount : "";
+  const editorRating =
+    editorRatingValue && editorRatingCount
+      ? editorRatingValue / editorRatingCount
+      : "No Ratings";
   const editorCreatedOn = editor
     ? new Intl.DateTimeFormat("en-US", {
         year: "numeric",
@@ -63,6 +75,23 @@ function Editor({
   }, [editor, isLoading, errMess, untitled]);
 
   useEffect(() => {
+    const alertUser = (event) => {
+      const e = event || window.event;
+      e.preventDefault();
+      if (e) {
+        e.returnValue = "";
+      }
+      return "";
+    };
+
+    window.addEventListener("beforeunload", alertUser);
+
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, []);
+
+  useEffect(() => {
     setPreparingSrcDoc(true);
     const perpareSrcDoc = setTimeout(() => {
       setPreparingSrcDoc(false);
@@ -98,6 +127,21 @@ function Editor({
   } else {
     return (
       <div className="editor">
+        <Prompt
+          when={unsavedChanges}
+          message="You Have Unsaved Changes, Leaving This Page May Reset Them !
+          Are You Sure You Want To Leave?"
+        />
+        <SaveEditorModal
+          isModalOpen={isSaveEditorModalOpen}
+          toggleModal={toggleSaveEditorModal}
+          previousEditorData={editor}
+          editorInputData={{
+            editorHTML: html,
+            editorCSS: css,
+            editorJavascript: javascript,
+          }}
+        />
         <Container fluid>
           {!untitled && editor && (
             <Row className="p-3 bg-light">
@@ -127,13 +171,35 @@ function Editor({
               </Col>
             </Row>
           )}
+          {unsavedChanges && (
+            <Row className="p-3 bg-dark align-items-center">
+              <Col sm={{ offset: "3", size: "4" }} className="p-3">
+                <span className="text-light">
+                  You have unsaved changes, Click to save the Editor !
+                </span>
+              </Col>
+              <Col sm="3">
+                <Button
+                  block
+                  outline
+                  color="success"
+                  onClick={toggleSaveEditorModal}
+                >
+                  Save Editor
+                </Button>
+              </Col>
+            </Row>
+          )}
           <Row noGutters className="p-3">
             <Col xs="12" md="4">
               <EditorInput
                 mode="html"
                 displayName="HTML"
                 value={html}
-                onValueChange={(editorHTML) => setHTML(editorHTML)}
+                onValueChange={(editorHTML) => {
+                  setHTML(editorHTML);
+                  setUnsavedChanges(true);
+                }}
               />
             </Col>
             <Col xs="12" md="4">
@@ -141,7 +207,10 @@ function Editor({
                 mode="css"
                 displayName="CSS"
                 value={css}
-                onValueChange={(editorCSS) => setCSS(editorCSS)}
+                onValueChange={(editorCSS) => {
+                  setCSS(editorCSS);
+                  setUnsavedChanges(true);
+                }}
               />
             </Col>
             <Col xs="12" md="4">
@@ -149,9 +218,10 @@ function Editor({
                 mode="javascript"
                 displayName="Javascript"
                 value={javascript}
-                onValueChange={(editorJavascript) =>
-                  setJavascript(editorJavascript)
-                }
+                onValueChange={(editorJavascript) => {
+                  setJavascript(editorJavascript);
+                  setUnsavedChanges(true);
+                }}
               />
             </Col>
             <Col xs="12">

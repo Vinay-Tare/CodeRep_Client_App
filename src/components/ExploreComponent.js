@@ -8,7 +8,6 @@ import {
   InputGroupText,
   Input,
 } from "reactstrap";
-import { Link } from "react-router-dom";
 import ExploreCard from "./ExploreCardComponent";
 import Loading from "./LoadingComponent";
 
@@ -18,7 +17,7 @@ function Explore({ editors, isLoading, errMess }) {
 
   const filterEditorsBySearch = (editor) => {
     const editorName = editor.name.toLowerCase();
-    const editorOwner = editor.owner.toLowerCase();
+    const editorOwner = editor.owner.username.toLowerCase();
     const editorDescription = editor.description.toLowerCase();
     const editorHTML = editor.editorHTML.toLowerCase();
     const editorCSS = editor.editorCSS.toLowerCase();
@@ -66,14 +65,8 @@ function Explore({ editors, isLoading, errMess }) {
     .sort(getSortFunction())
     .map((editor) => {
       return (
-        <Col xs="12" md="6" key={editor.id} className="p-2">
-          <Link
-            to={`/editor/${editor.id}`}
-            className="text-decoration-none text-reset"
-            title="Click To Open This Editor"
-          >
-            <ExploreCard editor={editor} />
-          </Link>
+        <Col xs="12" md="6" key={editor._id} className="p-2">
+          <ExploreCard editor={editor} />
         </Col>
       );
     });
@@ -118,7 +111,7 @@ function Explore({ editors, isLoading, errMess }) {
                 </InputGroupText>
                 <Input
                   type="search"
-                  style={{ boxShadow: "none", border: "none" }}
+                  className="shadow-none"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />

@@ -1,14 +1,23 @@
+import { Link } from "react-router-dom";
 import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
 import EditorOuput from "./EditorOutputComponent";
 
 function ExploreCard({ editor }) {
-  const editorRating = editor.rating;
-  const editorOwner = editor.owner;
+  const editorRatingValue = editor ? editor.ratingValue : "";
+  const editorRatingCount = editor ? editor.ratingCount : "";
+  const editorRating =
+    editorRatingValue && editorRatingCount
+      ? editorRatingValue / editorRatingCount
+      : "No Ratings";
+
+  const editorOwner = editor.owner.username;
 
   const editorDescription =
-    editor.description.length <= 160
-      ? editor.description
-      : editor.description.substring(0, 160).concat(" . . .");
+    (editor.description &&
+      (editor.description.length <= 160
+        ? editor.description
+        : editor.description.substring(0, 160).concat(" . . ."))) ||
+    "No Description Available";
 
   const editorName =
     editor.name.length <= 30
@@ -76,6 +85,11 @@ function ExploreCard({ editor }) {
             srcDoc={srcDoc}
           />
         </CardBody>
+        <Link
+          to={`/editor/${editor._id}`}
+          className="text-decoration-none text-reset stretched-link"
+          title="Click To Open This Editor"
+        />
       </Card>
     </div>
   );

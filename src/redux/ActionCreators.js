@@ -46,6 +46,116 @@ export const fetchEditors = () => (dispatch) => {
     });
 };
 
+export const saveEditorRequest = () => {
+  return {
+    type: "SAVE_EDITOR_REQUEST",
+  };
+};
+
+export const saveEditorSuccess = (editor) => {
+  return {
+    type: "SAVE_EDITOR_SUCCESS",
+    payload: editor,
+  };
+};
+
+export const saveEditorFailure = (errMess) => {
+  return {
+    type: "SAVE_EDITOR_FAILURE",
+    payload: errMess,
+  };
+};
+
+export const saveEditor = (editorData) => (dispatch) => {
+  dispatch(saveEditorRequest());
+
+  const bearer = "Bearer " + localStorage.getItem("token");
+
+  return axios({
+    method: "post",
+    url: baseUrl + "editors",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: bearer,
+    },
+    data: editorData,
+  })
+    .then((response) => {
+      if (response.data.success) {
+        dispatch(saveEditorSuccess(response.data.editor));
+      } else {
+        var error = new Error("Error " + response.data.status);
+        error.response = response;
+        throw error;
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        dispatch(saveEditorFailure(error.response.data.err));
+      } else if (error.request) {
+        dispatch(saveEditorFailure("Connection Failure!"));
+      }
+    });
+};
+
+export const updateEditorRequest = () => {
+  return {
+    type: "UPDATE_EDITOR_REQUEST",
+  };
+};
+
+export const updateEditorSuccess = (updatedEditor) => {
+  return {
+    type: "UPDATE_EDITOR_SUCCESS",
+    payload: updatedEditor,
+  };
+};
+
+export const updateEditorFailure = (errMess) => {
+  return {
+    type: "UPDATE_EDITOR_FAILURE",
+    payload: errMess,
+  };
+};
+
+export const updateEditor = (editorId, editorDataToUpdate) => (dispatch) => {
+  dispatch(updateEditorRequest());
+
+  const bearer = "Bearer " + localStorage.getItem("token");
+
+  return axios({
+    method: "put",
+    url: baseUrl + "editors/" + editorId,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: bearer,
+    },
+    data: editorDataToUpdate,
+  })
+    .then((response) => {
+      if (response.data.success) {
+        dispatch(updateEditorSuccess(response.data.editor));
+      } else {
+        var error = new Error("Error " + response.data.status);
+        error.response = response;
+        throw error;
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        dispatch(updateEditorFailure(error.response.data.err));
+      } else if (error.request) {
+        dispatch(updateEditorFailure("Connection Failure!"));
+      }
+    });
+};
+
+export const editorFormStateReset = () => {
+  return {
+    type: "EDITOR_FORM_STATE_RESET",
+  };
+};
+
 // Login Action Creaters
 
 export const loginRequest = () => {

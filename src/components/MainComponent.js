@@ -34,7 +34,7 @@ function Main() {
               untitled={false}
               editor={
                 editors.editors.filter(
-                  (editor) => editor.id === match.params.editorId
+                  (editor) => editor._id === match.params.editorId
                 )[0]
               }
               isLoading={editors.isLoading}
