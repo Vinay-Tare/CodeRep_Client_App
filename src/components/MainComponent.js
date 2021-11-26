@@ -1,20 +1,27 @@
 import { useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { checkLoginValidity, fetchEditors } from "../redux/ActionCreators";
+import {
+  checkLoginValidity,
+  fetchEditors,
+  fetchUsers,
+} from "../redux/ActionCreators";
 import Home from "./HomeComponent";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import Editor from "./EditorComponent";
 import Explore from "./ExploreComponent";
+import User from "./UserComponent";
 
 function Main() {
   const editors = useSelector((state) => state.editors);
+  const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(checkLoginValidity());
     dispatch(fetchEditors());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   return (
@@ -51,6 +58,21 @@ function Main() {
               editors={editors.editors}
               isLoading={editors.isLoading}
               errMess={editors.errMess}
+            />
+          )}
+        />
+        <Route
+          exact
+          path="/user/:username"
+          component={({ match }) => (
+            <User
+              user={
+                users.users.filter((user) => {
+                  return user.username === match.params.username;
+                })[0]
+              }              
+              isLoading={users.isLoading}
+              errMess={users.errMess}
             />
           )}
         />

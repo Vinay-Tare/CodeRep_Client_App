@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Container,
   Row,
@@ -12,6 +13,8 @@ import ExploreCard from "./ExploreCardComponent";
 import Loading from "./LoadingComponent";
 
 function Explore({ editors, isLoading, errMess }) {
+  const username = useSelector((state) => state.authentication.username);
+
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("None");
 
@@ -66,7 +69,7 @@ function Explore({ editors, isLoading, errMess }) {
     .map((editor) => {
       return (
         <Col xs="12" md="6" key={editor._id} className="p-2">
-          <ExploreCard editor={editor} />
+          <ExploreCard editor={editor} loggedInUsername={username} />
         </Col>
       );
     });

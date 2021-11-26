@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
 import EditorOuput from "./EditorOutputComponent";
 
-function ExploreCard({ editor }) {
+function ExploreCard({ editor, loggedInUsername }) {
   const editorRatingValue = editor ? editor.ratingValue : "";
   const editorRatingCount = editor ? editor.ratingCount : "";
   const editorRating =
@@ -10,7 +10,10 @@ function ExploreCard({ editor }) {
       ? editorRatingValue / editorRatingCount
       : "No Ratings";
 
-  const editorOwner = editor.owner.username;
+  const editorOwner =
+    loggedInUsername && loggedInUsername === editor.owner.username
+      ? "You"
+      : editor.owner.username;
 
   const editorDescription =
     (editor.description &&

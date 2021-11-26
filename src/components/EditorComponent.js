@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Prompt } from "react-router";
+import { Link } from "react-router-dom";
 import { Container, Row, Col, Alert, Input, Button } from "reactstrap";
 import EditorInput from "./EditorInputComponent";
 import EditorOuput from "./EditorOutputComponent";
@@ -12,6 +14,7 @@ function Editor({
   errMess = null,
   untitled = true,
 }) {
+  const authentication = useSelector((state) => state.authentication);
   const [html, setHTML] = useState("");
   const [css, setCSS] = useState("");
   const [javascript, setJavascript] = useState("");
@@ -24,8 +27,17 @@ function Editor({
     setIsSaveEditorModalOpen(!isSaveEditorModalOpen);
 
   const editorName = editor ? editor.name : "";
-  const editorDescription = editor ? editor.description : "";
-  const editorOwner = editor ? editor.owner.username : "";
+  const editorDescription =
+    (editor && editor.description
+      ? editor.description
+      : "No Description About Editor") || "";
+  const editorOwner =
+    (editor &&
+      authentication.username &&
+      (authentication.username === editor.owner.username
+        ? "You"
+        : editor.owner.username)) ||
+    "";
   const editorRatingValue = editor ? editor.ratingValue : "";
   const editorRatingCount = editor ? editor.ratingCount : "";
   const editorRating =
@@ -165,7 +177,14 @@ function Editor({
                   </div>{" "}
                   <hr className="my-1" />
                   <div>
-                    <span className="fa fa-user" /> Created By : {editorOwner}
+                    <span className="fa fa-user" /> Created By :{" "}
+                    <Link
+                      to={`/user/${editor.owner.username}`}
+                      className="text-decoration-none text-reset"
+                      title="Click To Open User Profile"
+                    >
+                      {editorOwner}
+                    </Link>
                   </div>
                 </div>
               </Col>
@@ -241,7 +260,15 @@ function Editor({
                 <hr className="mt-2 bg-dark" />
                 <p>
                   <span className="fa fa-user-circle-o" /> Created By :{" "}
-                  {editorOwner}
+                  <span>
+                    <Link
+                      to={`/user/${editor.owner.username}`}
+                      className="text-decoration-none text-reset"
+                      title="Click To Open User Profile"
+                    >
+                      {editorOwner}
+                    </Link>
+                  </span>
                 </p>
                 <p>
                   <span className="fa fa-pencil-square-o" /> Editor Name :{" "}

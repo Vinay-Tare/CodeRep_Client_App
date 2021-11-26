@@ -58,6 +58,16 @@ function Header() {
                 <span className="fa fa-compass" /> Explore
               </NavLink>
             </NavItem>
+            {authentication.isAuthenticated && (
+              <NavItem>
+                <NavLink
+                  className="nav-link"
+                  to={`/user/${authentication.username}`}
+                >
+                  <span className="fa fa-id-card" /> Dashboard
+                </NavLink>
+              </NavItem>
+            )}
             <NavItem>
               <NavLink className="nav-link" to="/editor/untitled">
                 <span className="fa fa-code" /> Create New Editor
