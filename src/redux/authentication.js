@@ -7,8 +7,6 @@ export const Authentication = (
     isAuthenticated: localStorage.getItem("token") ? true : false,
     token: localStorage.getItem("token"),
     username: localStorage.getItem("username"),
-    // ? JSON.parse(localStorage.getItem("username"))
-    // : null,
   },
   action
 ) => {

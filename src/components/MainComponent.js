@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchEditors } from "../redux/ActionCreators";
+import { checkLoginValidity, fetchEditors } from "../redux/ActionCreators";
 import Home from "./HomeComponent";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
@@ -13,6 +13,7 @@ function Main() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(checkLoginValidity());
     dispatch(fetchEditors());
   }, [dispatch]);
 

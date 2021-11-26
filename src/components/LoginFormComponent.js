@@ -10,6 +10,8 @@ import {
   Input,
   Button,
   Col,
+  InputGroup,
+  InputGroupAddon,
 } from "reactstrap";
 
 function LoginForm({ toggleModal }) {
@@ -17,6 +19,9 @@ function LoginForm({ toggleModal }) {
   const authentication = useSelector((state) => state.authentication);
 
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [passwordShown, setPasswordShown] = useState(false);
+
+  const togglePasswordShown = () => setPasswordShown(!passwordShown);
 
   const {
     register,
@@ -73,6 +78,7 @@ function LoginForm({ toggleModal }) {
           <Input
             type="text"
             name="loginUsername"
+            className="border border-dark"
             invalid={errors.username ? true : false}
             innerRef={usernameRef}
             {...usernameRest}
@@ -96,26 +102,44 @@ function LoginForm({ toggleModal }) {
             <span className="fa fa-lock" /> Password
             <span style={{ color: "red" }}>*</span> :
           </Label>
-          <Input
-            type="password"
-            name="password"
-            invalid={errors.password ? true : false}
-            innerRef={passwordRef}
-            {...passwordRest}
-          />
-          {errors.password && (
-            <FormFeedback invalid>
-              {errors.password.type === "required" && (
-                <span>Password Is Required!</span>
-              )}
-              {errors.password.type === "maxLength" && (
-                <span>Password Can Contain Maximum 30 Characters!</span>
-              )}
-              {errors.password.type === "serverValidation" && (
-                <span>{errors.password.message}</span>
-              )}
-            </FormFeedback>
-          )}
+          <InputGroup>
+            <Input
+              type={passwordShown ? "text" : "password"}
+              name="password"
+              className="border border-dark border-right-0"
+              invalid={errors.password ? true : false}
+              innerRef={passwordRef}
+              {...passwordRest}
+            />
+            <InputGroupAddon
+              addonType="append"
+              className="border border-dark rounded-right"
+            >
+              <Button
+                className="shadow-none border-0 bg-white text-dark"
+                onClick={togglePasswordShown}
+              >
+                {passwordShown ? (
+                  <span className="fa fa-eye" />
+                ) : (
+                  <span className="fa fa-eye-slash" />
+                )}
+              </Button>
+            </InputGroupAddon>
+            {errors.password && (
+              <FormFeedback invalid>
+                {errors.password.type === "required" && (
+                  <span>Password Is Required!</span>
+                )}
+                {errors.password.type === "maxLength" && (
+                  <span>Password Can Contain Maximum 30 Characters!</span>
+                )}
+                {errors.password.type === "serverValidation" && (
+                  <span>{errors.password.message}</span>
+                )}
+              </FormFeedback>
+            )}
+          </InputGroup>
         </FormGroup>
         <FormGroup row>
           <Col sm={{ offset: "6", size: "3" }} className="p-2 ">

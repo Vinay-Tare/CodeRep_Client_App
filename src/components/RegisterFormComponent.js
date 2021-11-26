@@ -10,6 +10,8 @@ import {
   Input,
   Button,
   Col,
+  InputGroup,
+  InputGroupAddon,
 } from "reactstrap";
 
 function RegisterForm({ toggleModal }) {
@@ -17,6 +19,14 @@ function RegisterForm({ toggleModal }) {
   const users = useSelector((state) => state.users);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [confirmPasswordShown, setConfirmPasswordShown] = useState(false);
+
+  const togglePasswordShown = () => setPasswordShown(!passwordShown);
+
+  const toggleConfirmPasswordShown = () => {
+    setConfirmPasswordShown(!confirmPasswordShown);
+  };
 
   const {
     register,
@@ -60,7 +70,7 @@ function RegisterForm({ toggleModal }) {
     maxLength: "500",
   });
 
-  const handleLogin = (userData) => {
+  const handleRegister = (userData) => {
     setIsFormSubmitted(true);
     dispatch(registerUser(userData));
   };
@@ -91,7 +101,7 @@ function RegisterForm({ toggleModal }) {
         </div>
       )}
       <Form
-        onSubmit={handleSubmit(handleLogin)}
+        onSubmit={handleSubmit(handleRegister)}
         className={showSuccess ? "d-none" : ""}
       >
         <FormGroup row>
@@ -103,6 +113,7 @@ function RegisterForm({ toggleModal }) {
             <Input
               type="text"
               name="username"
+              className="border border-dark"
               invalid={errors.username ? true : false}
               innerRef={usernameRef}
               {...usernameRest}
@@ -128,28 +139,46 @@ function RegisterForm({ toggleModal }) {
             <span style={{ color: "red" }}>*</span> :
           </Label>
           <Col sm="9">
-            <Input
-              type="password"
-              name="password"
-              invalid={errors.password ? true : false}
-              innerRef={passwordRef}
-              {...passwordRest}
-            />
-            {errors.password && (
-              <FormFeedback invalid>
-                {errors.password.type === "required" && (
-                  <span>Password Is Required!</span>
-                )}
-                {errors.password.type === "minLength" && (
-                  <span>
-                    Password Must Contain Atleast 8 Alphanumeric Characters!
-                  </span>
-                )}
-                {errors.password.type === "maxLength" && (
-                  <span>Password Can Contain Maximum 30 Characters!</span>
-                )}
-              </FormFeedback>
-            )}
+            <InputGroup>
+              <Input
+                type={passwordShown ? "text" : "password"}
+                name="password"
+                className="border border-dark border-right-0"
+                invalid={errors.password ? true : false}
+                innerRef={passwordRef}
+                {...passwordRest}
+              />
+              <InputGroupAddon
+                addonType="append"
+                className="border border-dark rounded-right"
+              >
+                <Button
+                  className="shadow-none border-0 bg-white text-dark"
+                  onClick={togglePasswordShown}
+                >
+                  {passwordShown ? (
+                    <span className="fa fa-eye" />
+                  ) : (
+                    <span className="fa fa-eye-slash" />
+                  )}
+                </Button>
+              </InputGroupAddon>
+              {errors.password && (
+                <FormFeedback invalid>
+                  {errors.password.type === "required" && (
+                    <span>Password Is Required!</span>
+                  )}
+                  {errors.password.type === "minLength" && (
+                    <span>
+                      Password Must Contain Atleast 8 Alphanumeric Characters!
+                    </span>
+                  )}
+                  {errors.password.type === "maxLength" && (
+                    <span>Password Can Contain Maximum 30 Characters!</span>
+                  )}
+                </FormFeedback>
+              )}
+            </InputGroup>
           </Col>
         </FormGroup>
         <FormGroup row>
@@ -158,34 +187,52 @@ function RegisterForm({ toggleModal }) {
             <span style={{ color: "red" }}>*</span> :
           </Label>
           <Col sm="9">
-            <Input
-              type="password"
-              name="confirmPassword"
-              invalid={errors.confirmPassword ? true : false}
-              innerRef={confirmPasswordRef}
-              {...confirmPasswordRest}
-            />
-            {errors.confirmPassword && (
-              <FormFeedback invalid>
-                {errors.confirmPassword.type === "required" && (
-                  <span>Confirm Password Is Required!</span>
-                )}
-                {errors.confirmPassword.type === "minLength" && (
-                  <span>
-                    Confirm Password Must Contain Atleast 8 Alphanumeric
-                    Characters!
-                  </span>
-                )}
-                {errors.confirmPassword.type === "maxLength" && (
-                  <span>
-                    Confirm Password Can Contain Maximum 30 Characters!
-                  </span>
-                )}
-                {errors.confirmPassword.type === "validate" && (
-                  <span>Confirm Password Should Match !</span>
-                )}
-              </FormFeedback>
-            )}
+            <InputGroup>
+              <Input
+                type={confirmPasswordShown ? "text" : "password"}
+                name="confirmPassword"
+                className="border border-dark border-right-0"
+                invalid={errors.confirmPassword ? true : false}
+                innerRef={confirmPasswordRef}
+                {...confirmPasswordRest}
+              />
+              <InputGroupAddon
+                addonType="append"
+                className="border border-dark rounded-right"
+              >
+                <Button
+                  className="shadow-none border-0 bg-white text-dark"
+                  onClick={toggleConfirmPasswordShown}
+                >
+                  {confirmPasswordShown ? (
+                    <span className="fa fa-eye" />
+                  ) : (
+                    <span className="fa fa-eye-slash" />
+                  )}
+                </Button>
+              </InputGroupAddon>
+              {errors.confirmPassword && (
+                <FormFeedback invalid>
+                  {errors.confirmPassword.type === "required" && (
+                    <span>Confirm Password Is Required!</span>
+                  )}
+                  {errors.confirmPassword.type === "minLength" && (
+                    <span>
+                      Confirm Password Must Contain Atleast 8 Alphanumeric
+                      Characters!
+                    </span>
+                  )}
+                  {errors.confirmPassword.type === "maxLength" && (
+                    <span>
+                      Confirm Password Can Contain Maximum 30 Characters!
+                    </span>
+                  )}
+                  {errors.confirmPassword.type === "validate" && (
+                    <span>Confirm Password Should Match !</span>
+                  )}
+                </FormFeedback>
+              )}
+            </InputGroup>
           </Col>
         </FormGroup>
         <FormGroup row>
@@ -197,6 +244,7 @@ function RegisterForm({ toggleModal }) {
             <Input
               type="text"
               name="fullName"
+              className="border border-dark"
               invalid={errors.fullName ? true : false}
               innerRef={fullNameRef}
               {...fullNameRest}
@@ -225,6 +273,7 @@ function RegisterForm({ toggleModal }) {
             <Input
               type="email"
               name="email"
+              className="border border-dark"
               invalid={errors.email ? true : false}
               innerRef={emailRef}
               {...emailRest}
@@ -249,15 +298,13 @@ function RegisterForm({ toggleModal }) {
             <Input
               type="textarea"
               name="description"
+              className="border border-dark"
               invalid={errors.description ? true : false}
               innerRef={descriptionRef}
               {...descriptionRest}
             />
             {errors.description && (
               <FormFeedback invalid>
-                {errors.description.type === "required" && (
-                  <span>Description Is Required!</span>
-                )}
                 {errors.description.type === "maxLength" && (
                   <span>Description Can Contain Maximum 500 Characters!</span>
                 )}

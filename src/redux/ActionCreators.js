@@ -193,6 +193,9 @@ export const loginUser = (userCredentials) => (dispatch) => {
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", userCredentials.username);
+        let loginDate = new Date();
+        let tokenExpiryDate = loginDate.setHours(loginDate.getHours() + 48);
+        localStorage.setItem("tokenExpiryDate", tokenExpiryDate);
         dispatch(
           loginSuccess({
             token: response.data.token,
@@ -236,13 +239,93 @@ export const logoutUser = () => (dispatch) => {
   dispatch(logoutRequest());
   localStorage.removeItem("token");
   localStorage.removeItem("username");
+  localStorage.removeItem("tokenExpiryDate");
   if (
     localStorage.getItem("token") === null &&
-    localStorage.getItem("username") === null
+    localStorage.getItem("username") === null &&
+    localStorage.getItem("tokenExpiryDate") === null
   ) {
     dispatch(logoutSuccess());
   } else {
     dispatch(logoutFailure());
+  }
+};
+
+// Check Login Validity Action Creator
+
+export const checkLoginValidity = () => (dispatch) => {
+  const bearer = "Bearer " + localStorage.getItem("token");
+  if (
+    localStorage.getItem("token") &&
+    localStorage.getItem("username") &&
+    localStorage.getItem("tokenExpiryDate")
+  ) {
+    return axios({
+      method: "get",
+      url: baseUrl + "users/checkJWTToken",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: bearer,
+      },
+    })
+      .then((response) => {
+        if (response.data.success) {
+          let tokenExpiryDate = localStorage.getItem("tokenExpiryDate");
+          let now = new Date().getTime();
+          if (tokenExpiryDate > now) {
+            let remainingTimeInMilliseconds = tokenExpiryDate - now;
+            let remainingMinutes = parseInt(
+              (remainingTimeInMilliseconds / 1000) % 60
+            );
+            let remainingHours = parseInt(
+              remainingTimeInMilliseconds / (60 * 60 * 1000)
+            );
+
+            if (remainingHours < 2) {
+              let alertUser = setInterval(() => {
+                if (remainingHours === 0 && remainingMinutes === 0) {
+                  dispatch(checkLoginValidity());
+                  clearInterval(alertUser);
+                }
+                alert(
+                  "Your Login Will Be Invalidated After " +
+                    remainingHours +
+                    " Hours & " +
+                    remainingMinutes +
+                    " Minutes. \n" +
+                    "Please Login Again Before Invalidation, Else You Might Lose Some Changes That You May Have Made !"
+                );
+              }, 10 * 60 * 1000);
+            } else {
+              setTimeout(() => {
+                dispatch(checkLoginValidity());
+              }, 90 * 60 * 1000);
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            alert(
+              "Check For Login Validity Indicated That You Have An Invalid Login.\n" +
+                "You Are Being Logged Out !"
+            );
+          } else {
+            alert(
+              "Server Responded With An Error While Checking For Login Validity.\n" +
+                "You Are Being Logged Out !"
+            );
+          }
+          dispatch(logoutUser());
+        } else if (error.request) {
+          alert(
+            "Unable To Connect To Server & Check For Login Validity Due To Connection Error.\n" +
+              "You Are Being Logged Out !"
+          );
+          dispatch(logoutUser());
+        }
+      });
   }
 };
 
