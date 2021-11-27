@@ -1,20 +1,46 @@
 /* Footer CSS */
 
 .footer h5 {
-    color: lightcyan;
+  color: lightcyan;
 }
 
-.footer .list-unstyled li{
-    padding: 5px 0px;
-    color: lightgray;
+.footer .list-unstyled li {
+  padding: 5px 0px;
+  color: lightgray;
 }
 
 .footer .list-unstyled a {
-    text-decoration: none;
-    color: lightgray;
-}   
+  text-decoration: none;
+  color: lightgray;
+}
 
 .footer .list-unstyled a:hover {
-    text-decoration: none;
-    color: lightblue;
-}  
+  text-decoration: none;
+  color: lightblue;
+}
+
+/* Rating CSS*/
+
+.rating_container > input {
+  display: none;
+} /* Remove radio buttons */
+
+.rating_container > label:before {
+  content: "\f005"; /* Star */
+  margin: 4px;
+  font-size: 1.5em;
+  font-family: FontAwesome;
+  display: inline-block;
+}
+
+.rating_container > label {
+  color: #222222; /* Start color when not clicked */
+}
+
+.rating_container > input:checked ~ label {
+  color: #ffca08;
+} /* Set yellow color when star checked */
+
+.rating_container > input:hover ~ label {
+  color: #ffca08;
+} /* Set yellow color when star hover */

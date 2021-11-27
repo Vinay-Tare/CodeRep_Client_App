@@ -55,7 +55,7 @@ function ExploreCard({ editor, loggedInUsername }) {
                 </div>
                 <hr className="my-1 d-none d-md-block" />
                 <div>
-                  ( {editorRating}{" "}
+                  ( {editorRating} Stars{" "}
                   <span className="fa fa-star-half-o text-warning" /> )
                 </div>
               </div>

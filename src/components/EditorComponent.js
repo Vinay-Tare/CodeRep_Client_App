@@ -6,6 +6,7 @@ import { Container, Row, Col, Alert, Input, Button } from "reactstrap";
 import EditorInput from "./EditorInputComponent";
 import EditorOuput from "./EditorOutputComponent";
 import Loading from "./LoadingComponent";
+import SaveRatingModal from "./SaveRatingModal";
 import SaveEditorModal from "./SaveEditorModalComponent";
 
 function Editor({
@@ -21,10 +22,15 @@ function Editor({
   const [srcDoc, setSrcDoc] = useState("");
   const [preparingSrcDoc, setPreparingSrcDoc] = useState(false);
   const [isSaveEditorModalOpen, setIsSaveEditorModalOpen] = useState(false);
+  const [isSaveRatingModalOpen, setIsSaveRatingModalOpen] = useState(false);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const toggleSaveEditorModal = () =>
     setIsSaveEditorModalOpen(!isSaveEditorModalOpen);
+
+  const toggleSaveRatingModal = () => {
+    setIsSaveRatingModalOpen(!isSaveRatingModalOpen);
+  };
 
   const editorName = editor ? editor.name : "";
   const editorDescription =
@@ -164,7 +170,7 @@ function Editor({
                   </div>
                   <hr className="my-1 d-none d-md-block" />
                   <div>
-                    ( {editorRating}{" "}
+                    ( {editorRating} Stars{" "}
                     <span className="fa fa-star-half-o text-warning" /> )
                   </div>
                 </div>
@@ -252,6 +258,28 @@ function Editor({
             </Col>
           </Row>
           {!untitled && editor && (
+            <Row className="p-3 bg-dark align-items-center">
+              <SaveRatingModal
+                isModalOpen={isSaveRatingModalOpen}
+                toggleModal={toggleSaveRatingModal}
+                editorId={editor._id}
+              />
+              <Col sm={{ offset: "3", size: "3" }} className="p-3 text-center">
+                <span className="text-light h6">Rate Editor :</span>
+              </Col>
+              <Col sm="3">
+                <Button
+                  block
+                  outline
+                  color="warning"
+                  onClick={toggleSaveRatingModal}
+                >
+                  Save Rating
+                </Button>
+              </Col>
+            </Row>
+          )}
+          {!untitled && editor && (
             <Row className="p-3 bg-light">
               <Col xs="12">
                 <p>
@@ -276,7 +304,7 @@ function Editor({
                 </p>
                 <p>
                   <span className="fa fa-star-o" /> Editor Rating :{" "}
-                  {editorRating}{" "}
+                  {editorRating} Stars{" "}
                   <span className="fa fa-star-half-o text-warning" />
                 </p>
                 <Container fluid className="p-0 my-3">

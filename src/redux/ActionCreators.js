@@ -156,6 +156,126 @@ export const editorFormStateReset = () => {
   };
 };
 
+export const createRatingRequest = () => {
+  return {
+    type: "CREATE_RATING_REQUEST",
+  };
+};
+
+export const createRatingSuccess = (ratingData) => {
+  return {
+    type: "CREATE_RATING_SUCCESS",
+    payload: ratingData,
+  };
+};
+
+export const createRatingFailure = (errMess) => {
+  return {
+    type: "CREATE_RATING_FAILURE",
+    payload: errMess,
+  };
+};
+
+export const createRating = (editorId, ratingValue) => (dispatch) => {
+  dispatch(createRatingRequest());
+
+  const bearer = "Bearer " + localStorage.getItem("token");
+
+  return axios({
+    method: "post",
+    url: baseUrl + "editors/" + editorId + "/rating",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: bearer,
+    },
+    data: { ratingValue: ratingValue },
+  })
+    .then((response) => {
+      if (response.data.success) {
+        let ratingData = {
+          editorId: editorId,
+          ratingValue: ratingValue,
+        };
+        dispatch(createRatingSuccess(ratingData));
+      } else {
+        var error = new Error("Error " + response.data.status);
+        error.response = response;
+        throw error;
+      }
+    })
+    .catch((error) => {
+      if (error.response) {
+        dispatch(createRatingFailure(error.response.data.err));
+      } else if (error.request) {
+        dispatch(createRatingFailure("Connection Failure!"));
+      }
+    });
+};
+
+export const updateRatingRequest = () => {
+  return {
+    type: "UPDATE_RATING_REQUEST",
+  };
+};
+
+export const updateRatingSuccess = (ratingData) => {
+  return {
+    type: "UPDATE_RATING_SUCCESS",
+    payload: ratingData,
+  };
+};
+
+export const updateRatingFailure = (errMess) => {
+  return {
+    type: "UPDATE_RATING_FAILURE",
+    payload: errMess,
+  };
+};
+
+export const updateRating =
+  (editorId, ratingValue, previousRatingValue) => (dispatch) => {
+    dispatch(updateRatingRequest());
+
+    const bearer = "Bearer " + localStorage.getItem("token");
+
+    return axios({
+      method: "put",
+      url: baseUrl + "editors/" + editorId + "/rating",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: bearer,
+      },
+      data: { ratingValue: ratingValue },
+    })
+      .then((response) => {
+        if (response.data.success) {
+          let ratingData = {
+            editorId: editorId,
+            ratingValue: ratingValue,
+            previousRatingValue: previousRatingValue,
+          };
+          dispatch(updateRatingSuccess(ratingData));
+        } else {
+          var error = new Error("Error " + response.data.status);
+          error.response = response;
+          throw error;
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          dispatch(updateRatingFailure(error.response.data.err));
+        } else if (error.request) {
+          dispatch(updateRatingFailure("Connection Failure!"));
+        }
+      });
+  };
+
+export const ratingFormStateReset = () => {
+  return {
+    type: "RATING_FORM_STATE_RESET",
+  };
+};
+
 // Login Action Creaters
 
 export const loginRequest = () => {
@@ -364,7 +484,7 @@ export const registerUser = (userData) => (dispatch) => {
   })
     .then((response) => {
       if (response.data.success) {
-        dispatch(registerUserSuccess(userData));
+        dispatch(registerUserSuccess(response.data.user));
       } else {
         var error = new Error("Error " + response.data.status);
         error.response = response;
@@ -374,7 +494,7 @@ export const registerUser = (userData) => (dispatch) => {
     .catch((error) => {
       if (error.response) {
         dispatch(registerUserFailure(error.response.data.err));
-      } else if (error.request) console.log("Connection Failure!");
+      } else if (error.request) registerUserFailure("Connection Failure!");
     });
 };
 

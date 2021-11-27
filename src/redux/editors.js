@@ -5,6 +5,8 @@ export const Editors = (
     isLoading: true,
     editorFormSuccess: false,
     editorFormErrMess: null,
+    ratingFormSuccess: false,
+    ratingFormErrMess: null,
     lastSavedOrUpdatedEditorId: null,
     errMess: null,
     editors: [],
@@ -78,6 +80,68 @@ export const Editors = (
         ...state,
         editorFormSuccess: false,
         editorFormErrMess: null,
+      };
+    case ActionTypes.CREATE_RATING_REQUEST:
+      return {
+        ...state,
+        ratingFormSuccess: false,
+        ratingFormErrMess: null,
+      };
+    case ActionTypes.CREATE_RATING_SUCCESS:
+      return {
+        ...state,
+        ratingFormSuccess: true,
+        ratingFormErrMess: null,
+        lastSavedOrUpdatedEditorId: action.payload.editorId,
+        editors: state.editors.map((editor) => {
+          if (editor._id === action.payload.editorId) {
+            editor.ratingValue =
+              editor.ratingValue + action.payload.ratingValue;
+            editor.ratingCount = editor.ratingCount + 1;
+            return editor;
+          }
+          return editor;
+        }),
+      };
+    case ActionTypes.CREATE_RATING_FAILURE:
+      return {
+        ...state,
+        ratingFormSuccess: false,
+        ratingFormErrMess: action.payload,
+      };
+    case ActionTypes.UPDATE_RATING_REQUEST:
+      return {
+        ...state,
+        ratingFormSuccess: false,
+        ratingFormErrMess: null,
+      };
+    case ActionTypes.UPDATE_RATING_SUCCESS:
+      return {
+        ...state,
+        ratingFormSuccess: true,
+        ratingFormErrMess: null,
+        lastSavedOrUpdatedEditorId: action.payload.editorId,
+        editors: state.editors.map((editor) => {
+          if (editor._id === action.payload.editorId) {
+            editor.ratingValue =
+              editor.ratingValue +
+              (action.payload.ratingValue - action.payload.previousRatingValue);
+            return editor;
+          }
+          return editor;
+        }),
+      };
+    case ActionTypes.UPDATE_RATING_FAILURE:
+      return {
+        ...state,
+        ratingFormSuccess: false,
+        ratingFormErrMess: action.payload,
+      };
+    case ActionTypes.RATING_FORM_STATE_RESET:
+      return {
+        ...state,
+        ratingFormSuccess: false,
+        ratingFormErrMess: null,
       };
     default:
       return state;
