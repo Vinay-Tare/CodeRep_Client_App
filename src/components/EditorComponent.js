@@ -8,6 +8,8 @@ import EditorOuput from "./EditorOutputComponent";
 import Loading from "./LoadingComponent";
 import SaveRatingModal from "./SaveRatingModal";
 import SaveEditorModal from "./SaveEditorModalComponent";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 function Editor({
   editor = null,
@@ -32,6 +34,78 @@ function Editor({
     setIsSaveRatingModalOpen(!isSaveRatingModalOpen);
   };
 
+  const exportEditor = () => {
+    if (authentication.isAuthenticated) {
+      let zip = new JSZip();
+      let src = zip.folder("src");
+      let dist = zip.folder("dist");
+
+      zip.file(
+        "README.md",
+        "# " +
+          editorName +
+          " #" +
+          "\n\n##An CodeRep Editor Created On CodeRep" +
+          ". \n\n---" +
+          "\nCreated On Date " +
+          editorCreatedAt +
+          ".\n\n---" +
+          "\nCreated By " +
+          "**" +
+          editor.owner.username +
+          "**" +
+          ". \n\n---" +
+          "\nDescription: " +
+          editorDescription +
+          ".\n\n---" +
+          "\nRating: " +
+          editorRating +
+          " Stars"
+      );
+
+      zip.file(
+        "license.txt",
+        "Copyright (c) " +
+          new Date().getFullYear() +
+          " by " +
+          authentication.username +
+          '\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:' +
+          "\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." +
+          '\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+      );
+
+      let distHTML = `<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${editor.name}</title>  
+  ${css.length > 0 ? `<link rel="stylesheet" href="./style.css" />` : ``}
+</head>
+<body>
+  ${html}
+</body>
+${javascript.length > 0 ? `<script src="./script.js"></script>` : ``}
+</html> `;
+
+      src.file("index.html", html);
+      dist.file("index.html", distHTML);
+      if (css.length > 0) {
+        src.file("style.css", css);
+        dist.file("style.css", css);
+      }
+      if (javascript.length > 0) {
+        src.file("script.js", javascript);
+        dist.file("script.js", javascript);
+      }
+
+      zip.generateAsync({ type: "blob" }).then((zipContent) => {
+        saveAs(zipContent, `${editor.name}.zip`);
+        alert("Editor Has Been Exported Sucessfully !");
+      });
+    } else {
+      alert("Please Login Into You Account To Export An Editor !");
+    }
+  };
+
   const editorName = editor ? editor.name : "";
   const editorDescription =
     (editor && editor.description
@@ -39,7 +113,6 @@ function Editor({
       : "No Description About Editor") || "";
   const editorOwner =
     (editor &&
-      authentication.username &&
       (authentication.username === editor.owner.username
         ? "You"
         : editor.owner.username)) ||
@@ -49,7 +122,7 @@ function Editor({
   const editorRating =
     editorRatingValue && editorRatingCount
       ? editorRatingValue / editorRatingCount
-      : "No Ratings";
+      : "No Rating";
   const editorCreatedOn = editor
     ? new Intl.DateTimeFormat("en-US", {
         year: "numeric",
@@ -284,6 +357,16 @@ function Editor({
               <Col xs="12">
                 <p>
                   <span className="fa fa-info-circle" /> <b>Editor Details :</b>
+                  <span className="float-right">
+                    <Button
+                      outline
+                      size="sm"
+                      color="danger"
+                      onClick={exportEditor}
+                    >
+                      Export Editor
+                    </Button>
+                  </span>
                 </p>
                 <hr className="mt-2 bg-dark" />
                 <p>

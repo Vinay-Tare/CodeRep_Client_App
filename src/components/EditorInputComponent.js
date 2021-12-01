@@ -14,7 +14,7 @@ function EditorInput({ mode, displayName, value, onValueChange }) {
   const editorSettings = {
     theme: "cobalt",
     width: "100%",
-    height: "270px",
+    height: "320px",
     fontSize: 14,
     wrapEnabled: true,
     editorProps: { $blockScrolling: true },

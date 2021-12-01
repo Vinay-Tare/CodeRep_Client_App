@@ -8,7 +8,7 @@ function ExploreCard({ editor, loggedInUsername }) {
   const editorRating =
     editorRatingValue && editorRatingCount
       ? editorRatingValue / editorRatingCount
-      : "No Ratings";
+      : "No Rating";
 
   const editorOwner =
     loggedInUsername && loggedInUsername === editor.owner.username

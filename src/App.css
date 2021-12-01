@@ -99,3 +99,16 @@
   transform: translateY(0px);
   opacity: 1;
 }
+
+/* EditorOutput CSS */
+
+.editor_output .resizable_editor_output_card {
+  min-height: 170px;
+  height: 210px;
+  max-height: 580px;
+  min-width: 50px;
+  width: 100%;
+  max-width: 100%;
+  resize: both;
+  overflow: hidden;
+}
