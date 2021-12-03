@@ -6,10 +6,6 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   Button,
 } from "reactstrap";
 import { NavLink } from "react-router-dom";
@@ -73,20 +69,6 @@ function Header() {
                 <span className="fa fa-code" /> Create New Editor
               </NavLink>
             </NavItem>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                <span className="fa fa-adjust" /> Theme
-              </DropdownToggle>
-              <DropdownMenu className="bg-light">
-                <DropdownItem>
-                  <span className="fa fa-sun-o" /> Light
-                </DropdownItem>
-                <DropdownItem>
-                  <span className="fa fa-moon-o" />
-                  Dark
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
           </Nav>
           <Nav className="ml-auto" navbar>
             <NavItem>
